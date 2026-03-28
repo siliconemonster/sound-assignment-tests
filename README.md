@@ -12,7 +12,7 @@ Renderiza arquivos MIDI usando bancos de samples de instrumentos reais (Philharm
 pip install mido numpy soundfile scipy librosa pretty_midi
 ```
 
-> `librosa` é recomendado para pitch-shifting e time-stretching de alta qualidade.
+> `librosa` é recomendado para pitch-shifting de alta qualidade.
 > O programa funciona sem ele, mas com qualidade inferior.
 
 ---
@@ -26,7 +26,7 @@ python midi_renderer.py <arquivo.mid> <pasta_de_samples> [opções]
 ### Exemplo básico
 
 ```bash
-python midi_renderer.py teste.mid samples\Philharmonia\trombone -o saida.wav
+python midi_renderer.py teste.mid samples\Philharmonia\violin -o saida.wav
 ```
 
 ### Outros exemplos
@@ -102,8 +102,8 @@ brass_F5_loud.aif
 
 1. **Escaneamento** — O banco é escaneado recursivamente; nota, dinâmica, articulação e duração são extraídas do nome de cada arquivo.
 2. **Busca** — Para cada nota MIDI, o sample mais próximo é selecionado por: articulação → dinâmica → distância semitonal → duração compatível.
-3. **Pitch-shift** — Se o sample não está na nota exata, `librosa.effects.pitch_shift` o transpõe (em semitons) sem alterar a duração.
-4. **Duração** — Se a nota MIDI for mais longa que o sample, aplica time-stretch. Se for mais curta, o sample toca até o fim natural.
+3. **Pitch-shift** — Se o sample não está na nota exata, `librosa.effects.pitch_shift` o transpõe sem alterar a duração.
+4. **Loop points** — O programa detecta automaticamente dois pontos no sustain do sample com boa correlação de forma de onda. A nota é então montada em três fases: ataque (uma vez) → sustain em loop (pelo tempo da nota MIDI) → release (decaimento natural, uma vez). O crossfade nas junções do loop evita cliques.
 5. **Velocity** — O volume de cada nota é mapeado do velocity MIDI (0–127) para um ganho de amplitude com curva suave.
 6. **Mix** — Todas as notas são somadas em um buffer e exportadas como WAV normalizado.
 
